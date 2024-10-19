@@ -6,7 +6,25 @@ input[type="number"] {
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+.add-pet-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
+.add-pet-form div {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-pet-form label {
+  margin-bottom: 5px;
+}
+
+.add-pet-form button {
+  margin-top: 10px;
+  padding: 10px;
+}
 .add-button {
   padding: 10px 20px;
   font-size: 16px;

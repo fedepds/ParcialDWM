@@ -33,3 +33,10 @@
 .card-button:hover {
   background-color: #32a4a8;
 }
+
+/* Nueva clase para las imágenes de las mascotas */
+.pet-photo {
+  width: 100%; /* Asegura que la imagen ocupe todo el ancho del contenedor */
+  height: auto; /* Mantiene la proporción de la imagen */
+  border-bottom: 1px solid #ddd; /* Añade un borde inferior para separarla del contenido */
+}

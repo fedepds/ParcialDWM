@@ -1,91 +1,103 @@
-import React, { useState } from "react"; // Importa React y el hook useState para manejar el estado de los inputs
-import { useNavigate } from "react-router-dom"; // Importa el hook useNavigate para manejar la navegación de rutas
-import "./styles.css"; // Importa los estilos CSS
+import React, { useState } from "react";
+import "./styles.css";
+import { useNavigate } from "react-router-dom";
 
-// Componente AddGame para agregar un nuevo juego
+// Componente para agregar una nueva mascota
 const AddPet = () => {
-  // Define los estados para almacenar los valores de los campos del formulario
-  const [name, setName] = useState(""); // Estado para almacenar el título del juego
-  const [description, setDescription] = useState(""); // Estado para almacenar la descripción del juego
-  const [characteristics, setCharacteristics] = useState(""); // Estado para almacenar las categorías del juego
-  const [type, setType] = useState(""); // Estado para almacenar el número de jugadores del juego
-  const [age, setAge] = useState(""); // Estado para almacenar el número de jugadores del jueg
-  const navigate = useNavigate(); // Hook para redirigir al usuario a diferentes rutas
+  const [name, setName] = useState(""); // Estado para el nombre
+  const [age, setAge] = useState(""); // Estado para la edad
+  const [type, setType] = useState(""); // Estado para el tipo
+  const [description, setDescription] = useState(""); // Estado para la descripción
+  const navigate = useNavigate();
 
-  // Variable que desactiva el botón si falta algún campo obligatorio
-  const buttonIsDisabled = !name || !description || !type || !characteristics || !age || !type; ; 
+  // Función para manejar el envío del formulario
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // Previene el comportamiento por defecto del formulario
 
-  // Función asíncrona que se ejecuta al hacer clic en "Agregar Juego"
-  const handleAddPet = async () => {
+    const newPet = {
+      name,
+      age,
+      type,
+      description,
+      // Agrega más campos si es necesario
+    };
+
+    // Enviar la nueva mascota a la API
     const response = await fetch("http://localhost:3005/api/pets", {
-      method: "POST", // Utiliza el método POST para enviar los datos
+      method: "POST",
       headers: {
-        "Content-Type": "application/json", // Define el tipo de contenido como JSON
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, age, type, description,characteristics}), // Convierte los datos del juego en formato JSON y los envía en el cuerpo de la solicitud
+      body: JSON.stringify(newPet),
     });
 
     if (response.ok) {
-      // Si la respuesta es exitosa
-      navigate("/"); // Redirige al usuario a la página principal
+      // Redirigir al usuario a la página principal después de agregar la mascota
+      navigate("/");
+    } else {
+      // Manejar errores aquí si es necesario
+      console.error("Error al agregar la mascota");
     }
   };
 
   return (
     <div>
-      <h1>Agregar Pet</h1> {/* Título del formulario */}
-      <div>
+      <h1>Agregar Mascota</h1>
+      <form onSubmit={handleSubmit} className="add-pet-form">
         <div>
+          <label htmlFor="name">Nombre:</label>
           <input
             type="text"
-            placeholder="Nombre" // Input para el título del juego
-            value={name} // Valor controlado por el estado 'title'
-            onChange={(e) => setName(e.target.value)} // Actualiza el estado cuando el usuario escribe
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
           />
         </div>
+
         <div>
-          <input
-            type="text"
-            placeholder="Descripción" // Input para la descripción del juego
-            value={description} // Valor controlado por el estado 'description'
-            onChange={(e) => setDescription(e.target.value)} // Actualiza el estado cuando el usuario escribe
-          />
+          <label htmlFor="type">Tipo:</label>
+          <select
+            id="type"
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            required
+          >
+            <option value="">Selecciona un tipo</option>
+            <option value="Perro">Perro</option>
+            <option value="Gato">Gato</option>
+            {/* Puedes agregar más tipos aquí */}
+          </select>
         </div>
+
         <div>
-          <input
-            type="text"
-            placeholder="Age" // Input para la cantidad de jugadores
-            value={age} // Valor controlado por el estado 'players'
-            onChange={(e) => setAge((e.target.value))} // Convierte el valor a número y actualiza el estado
-          />
+          <label htmlFor="age">Edad:</label>
+          <select
+            id="age"
+            value={age}
+            onChange={(e) => setAge(e.target.value)}
+            required
+          >
+            <option value="">Selecciona una edad</option>
+            <option value="Cachorro">Cachorro</option>
+            <option value="Adulto">Adulto</option>
+            <option value="Senior">Senior</option>
+          </select>
         </div>
+
         <div>
-          <input
-            type="text"
-            placeholder="type" // Input para las categorías del juego
-            value={type} // Valor controlado por el estado 'categories'
-            onChange={(e) => setType(e.target.value)} // Actualiza el estado cuando el usuario escribe
+          <label htmlFor="description">Descripción:</label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </div>
-        <div>
-          <input
-            type="text"
-            placeholder="caracteristicas" // Input para las categorías del juego
-            value={characteristics} // Valor controlado por el estado 'categories'
-            onChange={(e) => setCharacteristics(e.target.value)} // Actualiza el estado cuando el usuario escribe
-          />
-        </div>
-      </div>
-      {/* Botón para agregar el juego, desactivado si falta algún campo obligatorio */}
-      <button
-        className="add-button"
-        onClick={handleAddPet} // Llama a handleAddGame al hacer clic
-        disabled={buttonIsDisabled} // Desactiva el botón si falta algún campo
-      >
-        Agregar Pet {/* Texto del botón */}
-      </button>
+
+        <button type="submit">Agregar Mascota</button>
+      </form>
     </div>
   );
 };
 
-export default AddPet; // Exporta el componente AddGame como predeterminado
+export default AddPet; // Exporta el componente AddPet como predeterminado

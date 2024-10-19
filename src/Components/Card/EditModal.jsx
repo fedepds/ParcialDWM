@@ -1,72 +1,77 @@
 import { useState } from "react"; // Importa el hook useState para manejar el estado de los inputs
 import "./EditModal.css"; // Importa los estilos específicos para el modal
 
-// Función asíncrona para actualizar los datos de un juego
-const updatedPets = async (id, name,age, description, type, characteristics) => {
+// Función asíncrona para actualizar los datos de una mascota
+const updatedPets = async (
+  id,
+  name,
+  age,
+  description,
+  type,
+  characteristics
+) => {
   const petEdit = await fetch("http://localhost:3005/api/pets/" + id, {
-    method: "PUT", // Método PUT para actualizar un juego existente
+    method: "PUT", // Método PUT para actualizar una mascota existente
     headers: {
       "Content-Type": "application/json", // Define que se envía JSON
     },
     body: JSON.stringify({
-      name, // Pasa el título actualizado
+      name, // Pasa el nombre actualizado
       age,
-      type, // Pasa la descripción actualizada
-      description, // Pasa la cantidad de jugadores actualizada
-      characteristics, // Pasa las categorías actualizadas
+      type, // Pasa el tipo actualizado
+      description, // Pasa la descripción actualizada
+      characteristics, // Pasa las características actualizadas
     }),
   });
   return petEdit; // Retorna la respuesta de la solicitud
 };
 
-// Componente EditModal para editar la información de un juego
+// Componente EditModal para editar la información de una mascota
 const EditModal = ({
-  currentName, // Título actual del juego
-  id, // ID del juego
-  refreshPets, // Función para refrescar la lista de juegos tras la actualización
+  currentName, // Nombre actual de la mascota
+  id, // ID de la mascota
+  refreshPets, // Función para refrescar la lista de mascotas tras la actualización
   currentAge,
-  currentDescription, // Descripción actual del juego
-  currentType, // Cantidad de jugadores actual del juego
-  currentCharacteristics, // Categorías actuales del juego
+  currentDescription, // Descripción actual de la mascota
+  currentType, // Tipo actual de la mascota
+  currentCharacteristics, // Características actuales de la mascota
   closeModal, // Función para cerrar el modal
 }) => {
   // Estados para almacenar los nuevos valores introducidos por el usuario
-  const [newName, setNewName] = useState(currentName); // Estado para el nuevo título
+  const [newName, setNewName] = useState(currentName); // Estado para el nuevo nombre
   const [newDescription, setNewDescription] = useState(currentDescription); // Estado para la nueva descripción
-  const [newType, setNewType] = useState(currentType); // Estado para la nueva cantidad de jugadores
-  const [newCharacteristics, setNewCharacteristics] = useState(currentCharacteristics); // Estado para las nuevas categorías
-  const [newAge, setNewAge] = useState(currentAge);
+  const [newType, setNewType] = useState(currentType); // Estado para el nuevo tipo
+  const [newCharacteristics, setNewCharacteristics] = useState(
+    currentCharacteristics
+  ); // Estado para las nuevas características
+  const [newAge, setNewAge] = useState(currentAge); // Estado para la nueva edad
 
   // Función para manejar el clic en "Guardar cambios"
   const handleEditClick = async () => {
     const response = await updatedPets(
-      id, // ID del juego a actualizar
-      newName, // Nuevo título
+      id, // ID de la mascota a actualizar
+      newName, // Nuevo nombre
       newDescription, // Nueva descripción
-      newType, // Nueva cantidad de jugadores
-      newAge, // Nuevas categorías
-      newCharacteristics
+      newType, // Nuevo tipo
+      newAge, // Nueva edad
+      newCharacteristics // Nuevas características
     );
     if (response.ok) {
-      refreshPets(); // Refresca la lista de juegos si la actualización fue exitosa
+      refreshPets(); // Refresca la lista de mascotas si la actualización fue exitosa
       closeModal(); // Cierra el modal
     }
   };
 
   return (
     <div className="modal-overlay">
-      {" "}
-      {/* Capa superpuesta del modal */}
       <div className="modal-content">
-        {" "}
-        {/* Contenido del modal */}
-        <h2>Editar Juego</h2> {/* Título del modal */}
-        {/* Input para el nuevo título */}
+        <h2>Editar Mascota</h2> {/* Título del modal */}
+        {/* Input para el nuevo nombre */}
         <input
           type="text"
           placeholder="Nombre"
-          value={newName} // Muestra el nuevo título o el actual
-          onChange={(e) => setNewName(e.target.value)} // Actualiza el estado del título cuando el usuario escribe
+          value={newName} // Muestra el nuevo nombre o el actual
+          onChange={(e) => setNewName(e.target.value)} // Actualiza el estado del nombre cuando el usuario escribe
         />
         {/* Input para la nueva descripción */}
         <input
@@ -75,27 +80,36 @@ const EditModal = ({
           value={newDescription} // Muestra la nueva descripción o la actual
           onChange={(e) => setNewDescription(e.target.value)} // Actualiza el estado de la descripción
         />
-        <input
-          type="number"
-          placeholder="Age"
-          value={newAge} // Muestra la cantidad de jugadores actual o nueva
+        {/* Selector para la nueva edad */}
+        <select
+          value={newAge}
+          onChange={(e) => setNewAge(e.target.value)}
+          required
+        >
+          <option value="">Selecciona una edad</option>
+          <option value="Cachorro">Cachorro</option>
+          <option value="Adulto">Adulto</option>
+          <option value="Senior">Senior</option>
+        </select>
+        {/* Selector para el nuevo tipo */}
+        <select
+          value={newType}
           onChange={(e) => setNewType(e.target.value)}
-        />
-        {/* Input para la nueva cantidad de jugadores */}
-        <input
-          type="number"
-          placeholder="Tipo"
-          value={newType} // Muestra la cantidad de jugadores actual o nueva
-          onChange={(e) => setNewType(e.target.value)}
-        />
-        {/* Input para las nuevas categorías */}
+          required
+        >
+          <option value="">Selecciona un tipo</option>
+          <option value="Perro">Perro</option>
+          <option value="Gato">Gato</option>
+          {/* Puedes agregar más tipos aquí */}
+        </select>
+        {/* Input para las nuevas características */}
         <input
           type="text"
-          placeholder="Characteristics"
-          value={newCharacteristics} // Muestra las categorías actuales o nuevas
-          onChange={(e) => setNewCharacteristics(e.target.value)} // Actualiza el estado de las categorías
+          placeholder="Características"
+          value={newCharacteristics} // Muestra las características actuales o nuevas
+          onChange={(e) => setNewCharacteristics(e.target.value)} // Actualiza el estado de las características
         />
-        {/* Botón para guardar los cambios y actualizar el juego */}
+        {/* Botón para guardar los cambios y actualizar la mascota */}
         <button onClick={handleEditClick}>Guardar cambios</button>
         {/* Botón para cerrar el modal sin guardar cambios */}
         <button onClick={closeModal}>Cancelar</button>

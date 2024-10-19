@@ -1,59 +1,70 @@
 import React, { useEffect, useState } from "react"; // Importa React y los hooks useEffect y useState
 import "./styles.css"; // Importa los estilos CSS
-import { useNavigate, useParams } from "react-router-dom"; // Importa useNavigate para la navegación y useParams para obtener parámetros de la URL
-import "./DetalleModal.css";
+import "./DetalleModal.css"; // Importa los estilos específicos del modal
+import { useParams } from "react-router-dom"; // Importa useParams para obtener parámetros de la URL
 
-
-// Función asíncrona para obtener un juego por su ID desde la API
+// Función asíncrona para obtener una mascota por su ID desde la API
 const getPetByID = async (id) => {
-  const petFetch = await fetch(`http://localhost:3005/api/pets/${id}`); // Realiza una solicitud fetch con el ID del juego
+  const petFetch = await fetch(`http://localhost:3005/api/pets/${id}`); // Realiza una solicitud fetch con el ID de la mascota
+  if (!petFetch.ok) {
+    throw new Error("Error al obtener la mascota"); // Lanza un error si la respuesta no es exitosa
+  }
   const pet = await petFetch.json(); // Convierte la respuesta a formato JSON
-  return pet; // Retorna el juego obtenido
+  return pet; // Retorna la mascota obtenida
 };
-const DetalleModal = ({
 
-  closeModal, // Función para cerrar el modal
-}) => {
-  const [pet, setPets] = useState();
-const { id } = useParams();
-
+const DetalleModal = ({ closeModal }) => {
+  const [pet, setPet] = useState(null); // Inicializa el estado con null
+  const { id } = useParams(); // Obtiene el ID de la URL
 
   useEffect(() => {
-    getPetByID(id).then((pet) => setPets(pet[0])); // Llama a getGameByID y actualiza el estado con el primer juego obtenido
+    const fetchPet = async () => {
+      try {
+        const petData = await getPetByID(id); // Llama a la función para obtener la mascota
+        setPet(petData); // Actualiza el estado con los datos de la mascota
+      } catch (error) {
+        console.error(error); // Maneja el error
+        setPet(null); // Si hay un error, establece pet como null
+      }
+    };
+
+    fetchPet(); // Ejecuta la función para obtener la mascota
   }, [id]);
 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
         <h1>Detalle</h1> {/* Título de la página de detalles */}
-        {pet && ( // Renderiza los detalles del juego si el estado 'game' no está vacío
+        {pet ? ( // Renderiza los detalles de la mascota si pet no es null
           <div>
+            <img src={pet.photo} alt={pet.name} className="pet-photo" />{" "}
+            {/* Muestra la foto de la mascota */}
             <div className="detail">
               <span className="detail-title">Nombre: </span>
-              <span className="detail-content">{pet.name}</span>{" "}
-              {/* Muestra el título del juego */}
+              <span className="detail-content">{pet.name}</span>
             </div>
             <div className="detail">
               <span className="detail-title">Descripción: </span>
-              <span className="detail-content">{pet.description}</span>{" "}
-              {/* Muestra la descripción del juego */}
+              <span className="detail-content">{pet.description}</span>
             </div>
             <div className="detail">
-              <span className="detail-title">Cantidad jugadores: </span>
-              <span className="detail-content">{pet.type}</span>{" "}
-              {/* Muestra la cantidad de jugadores */}
+              <span className="detail-title">Tipo: </span>
+              <span className="detail-content">{pet.type}</span>
             </div>
             <div className="detail">
-              <span className="detail-title">Categoría: </span>
-              <span className="detail-content">{pet.characteristics}</span>{" "}
-              {/* Muestra la categoría del juego */}
+              <span className="detail-title">Características: </span>
+              <span className="detail-content">
+                {pet.characteristics.join(", ")}
+              </span>
             </div>
             <button onClick={closeModal}>Cancelar</button>
           </div>
+        ) : (
+          <p>Cargando...</p> // Mensaje de carga si la mascota aún no se ha recuperado
         )}
       </div>
     </div>
   );
 };
 
-export default DetalleModal;
+export default DetalleModal; // Exporta el componente DetalleModal como predeterminado
