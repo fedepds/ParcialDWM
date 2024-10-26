@@ -55,7 +55,7 @@ const Home = () => {
       filtered = filtered.filter((pet) => pet.age === age);
     }
 
-    setFilteredPets(filtered); // Actualiza las mascotas filtradas
+    setFilteredPets(filtered); 
   };
 
   const handleAddGameClick = () => {
@@ -91,6 +91,7 @@ const Home = () => {
       <div className="home-grid-cards">
         {filteredPets.map((pet) => (
           <Card
+            photo={pet.photo}
             key={pet.id}
             name={pet.name}
             age={pet.age}

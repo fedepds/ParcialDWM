@@ -13,7 +13,15 @@ const getPetByID = async (id) => {
   return pet; // Retorna la mascota obtenida
 };
 
-const DetalleModal = ({ closeModal }) => {
+// Función asíncrona para adoptar (eliminar) una mascota
+const adoptPet = async (id) => {
+  const response = await fetch(`http://localhost:3005/api/pets/${id}`, {
+    method: "DELETE", // Método DELETE para eliminar una mascota
+  });
+  return response; // Retorna la respuesta de la solicitud
+};
+
+const DetalleModal = ({ closeModal, refreshPets }) => {
   const [pet, setPet] = useState(null); // Inicializa el estado con null
   const { id } = useParams(); // Obtiene el ID de la URL
 
@@ -30,6 +38,15 @@ const DetalleModal = ({ closeModal }) => {
 
     fetchPet(); // Ejecuta la función para obtener la mascota
   }, [id]);
+
+  // Función para manejar la adopción de la mascota
+  const handleAdoptClick = async () => {
+    const response = await adoptPet(id); // Envía solicitud para adoptar la mascota
+    if (response.ok) {
+      refreshPets(); // Refresca la lista de mascotas si la adopción fue exitosa
+      closeModal(); // Cierra el modal
+    }
+  };
 
   return (
     <div className="modal-overlay">
@@ -57,6 +74,17 @@ const DetalleModal = ({ closeModal }) => {
                 {pet.characteristics.join(", ")}
               </span>
             </div>
+            {/* Botón para editar la mascota */}
+            <button
+              onClick={() => {
+                /* Aquí debes abrir el modal de edición */
+              }}
+            >
+              Editar
+            </button>
+            {/* Botón para adoptar la mascota */}
+            <button onClick={handleAdoptClick}>Adoptar</button>
+            {/* Botón para cerrar el modal */}
             <button onClick={closeModal}>Cancelar</button>
           </div>
         ) : (
